@@ -239,9 +239,74 @@ async function updateUser(user, id) {
         console.log(error);
     }
 
-
 }
 
+
+//phase2 I'm Doing 
+
+const syncBtn=document.getElementById("sync");
+syncBtn.addEventListener('click',(e)=>{
+    //I've to sync the Data... 
+    //you have to do some authentications.. here we go..
+    const token=getToken()
+   
+});
+
+
+async function getToken() {
+    try {
+     const resp = await fetch(`https://cors-anywhere.herokuapp.com/https://qa.sunbasedata.com/sunbase/portal/api/assignment_auth.jsp`, {
+         method: "POST",
+         headers: {
+             'Content-Type': 'application/json',
+             'Accept': '*/*',
+             'User-Agent': 'PostmanRuntime/7.36.1',
+             'Accept-Encoding': 'gzip, deflate, br',
+             'Connection': 'keep-alive',
+         },
+         body: JSON.stringify({
+             "login_id": "test@sunbasedata.com",
+             "password": "Test@123"
+         })
+     });
+ 
+     const data = await resp.json();
+     console.log(data);
+     getCustomerList(data);
+ 
+     return data;
+    } catch (error) {
+     console.error('Error:', error);
+     // Handle errors here
+    }
+ }
+ 
+ async function getCustomerList(data) {
+     const token = data.access_token;
+ 
+     console.log(token);
+ 
+     try {
+         const res = await fetch(`https://cors-anywhere.herokuapp.com/https://qa.sunbasedata.com/sunbase/portal/api/assignment.jsp?cmd=get_customer_list`, {
+             method: "GET",
+             headers: {
+                 "Authorization": `Bearer ${token}`,
+                 'Content-Type': 'application/json'
+             },
+         });
+ 
+         const resData = await res.json();
+ 
+         let arr = Object.keys(resData).map(key => resData[key]);
+         arr.forEach(ele => {
+             addUser(ele);
+         });
+ 
+     } catch (error) {
+         console.log(error);
+     }
+ }
+ 
 
 
 
