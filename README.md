@@ -35,12 +35,12 @@ spring.datasource.username=root
 spring.datasource.password=_Aniket@123
 spring.jpa.hibernate.ddl-auto=update.
 
-#Usage
+##Usage
 After setting up the database configuration, run the application. You can access the frontend by opening the index.html file in your web browser and logging in with the provided credentials.
 
 
-#Contributing
+##Contributing
 Contributions are welcome! If you'd like to contribute to this project, please fork the repository and create a pull request.
 
-#License
+##License
 This project is licensed under the MIT License. See the LICENSE file for details.
