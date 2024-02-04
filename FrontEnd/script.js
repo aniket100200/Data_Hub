@@ -9,10 +9,52 @@ const closeBtn = document.querySelector(".close-btn"),
 let currEditId;
 
 
+
 loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    console.log("This is Login Form");
+    const email = e.target.username.value;
+    const password = e.target.password.value;
+
+    //you have username and Password
+    //I'll Get Token First..
+    loginUser(email,password);
+
 })
+
+    if(sessionStorage.getItem("token"))loginUser();
+
+
+async function loginUser(email,password) {
+    try {
+
+        
+        if(!sessionStorage.getItem("token")){
+
+            //You have a token in 
+            const res = await fetch(`http://localhost:8080/auth/login`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            });
+    
+            const data = await res.json();
+            sessionStorage.setItem("token", data.jwtToken);
+        }
+
+        getData();
+        loginForm.style.display="none";
+        document.querySelector(".customer-list-screen").style.display="block";
+
+    } catch (error) {
+        alert("Something Went Wrong");
+    }
+}
 
 search.addEventListener('change', (e) => {
     // console.log(e.target.value);
@@ -21,12 +63,14 @@ search.addEventListener('change', (e) => {
 
 });
 
+
+
 const faSearch = document.querySelector(".fa-search");
 
 
 faSearch.addEventListener('click', (e) => {
     //let's extract the input..
-    const input = document.getElementById("input");
+    const input = document.getElementById("input")
     let value = input.value;
     console.log(searchBy, value);
     getData(searchBy, value.trim());
@@ -34,7 +78,16 @@ faSearch.addEventListener('click', (e) => {
 
 async function getData(type, value) {
     try {
-        const res = await fetch(`http://localhost:8080/user/find-by-search/${type}?value=${value}`);
+
+         let token=sessionStorage.getItem("token")
+         console.log("Bearer "+token);
+        const res = await fetch(`http://localhost:8080/user/find-by-search/${type}?value=${value}`,{
+            method:"GET",
+            headers:{
+                "Authorization":`Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
+        });
         let data = await res.json();
 
         data = Object.keys(data).map(key => data[key]);
@@ -51,7 +104,6 @@ async function getData(type, value) {
     }
 }
 
-getData("all", "all");
 
 function getRow(ele, tbody) {
 
@@ -75,8 +127,15 @@ function getRow(ele, tbody) {
 async function removeRow(id) {
 
     try {
+        const token=sessionStorage.getItem("token");
         const res = await fetch(`http://localhost:8080/user/delete?id=${id}`, {
             method: 'DELETE',
+            headers:{
+                headers:{
+                    "Authorization":`Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                }
+            }
         });
 
         alert("Deleted Successfully");
@@ -92,8 +151,8 @@ async function removeRow(id) {
 
 closeBtn.addEventListener('click', () => {
     regForm.style.display = "none";
-    submitBtn.style.display="flex";
-    updateUserBtn.style.display="none";
+    submitBtn.style.display = "flex";
+    updateUserBtn.style.display = "none";
 });
 
 addCustomerBtn.addEventListener('click', () => {
@@ -129,9 +188,13 @@ submittedForm.addEventListener('submit', (e) => {
 
 async function addUser(user) {
     try {
+        const token=sessionStorage.getItem("token");
         const res = await fetch(`http://localhost:8080/user/add`, {
             method: "POST",
-            headers: { 'Content-Type': 'application/json' },
+            headers:{
+                "Authorization":`Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify(user)
         });
 
@@ -153,8 +216,14 @@ const updateUserBtn = document.querySelector(".update");
 const addUserBtn = document.querySelector(".add");
 
 async function editUser(userId) {
-
-    const res = await fetch(`http://localhost:8080/user/find-by-id?id=${userId}`);
+    const token=sessionStorage.getItem("token");
+    const res = await fetch(`http://localhost:8080/user/find-by-id?id=${userId}`,{
+        method:"GET",
+        headers:{
+            "Authorization":`Bearer ${token}`,
+            'Content-Type': 'application/json',
+        }
+    });
 
     const data = await res.json();
 
@@ -209,18 +278,22 @@ updateUserBtn.addEventListener('click', (e) => {
 
 async function updateUser(user, id) {
     try {
+        const token =sessionStorage.getItem("token");
         const res = await fetch(`http://localhost:8080/user/update?id=${id}`, {
             method: "PUT",
-            headers: { 'Content-Type': 'application/json' },
+            headers:{
+                "Authorization":`Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify(user)
         });
 
-        const data = await res.json();       
+        const data = await res.json();
         alert(data.message);
 
-        let row=document.getElementById(`${id}`);
+        let row = document.getElementById(`${id}`);
 
-        row.innerHTML=`        
+        row.innerHTML = `        
         <td>${data.firstName}</td>
         <td>${data.lastName}</td>
         <td>${data.address}</td>
@@ -244,69 +317,69 @@ async function updateUser(user, id) {
 
 //phase2 I'm Doing 
 
-const syncBtn=document.getElementById("sync");
-syncBtn.addEventListener('click',(e)=>{
+const syncBtn = document.getElementById("sync");
+syncBtn.addEventListener('click', (e) => {
     //I've to sync the Data... 
     //you have to do some authentications.. here we go..
-    const token=getToken()
-   
+    const token = getToken()
+
 });
 
 
 async function getToken() {
     try {
-     const resp = await fetch(`https://cors-anywhere.herokuapp.com/https://qa.sunbasedata.com/sunbase/portal/api/assignment_auth.jsp`, {
-         method: "POST",
-         headers: {
-             'Content-Type': 'application/json',
-             'Accept': '*/*',
-             'User-Agent': 'PostmanRuntime/7.36.1',
-             'Accept-Encoding': 'gzip, deflate, br',
-             'Connection': 'keep-alive',
-         },
-         body: JSON.stringify({
-             "login_id": "test@sunbasedata.com",
-             "password": "Test@123"
-         })
-     });
- 
-     const data = await resp.json();
-     console.log(data);
-     getCustomerList(data);
- 
-     return data;
+        const resp = await fetch(`https://cors-anywhere.herokuapp.com/https://qa.sunbasedata.com/sunbase/portal/api/assignment_auth.jsp`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': '*/*',
+                'User-Agent': 'PostmanRuntime/7.36.1',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Connection': 'keep-alive',
+            },
+            body: JSON.stringify({
+                "login_id": "test@sunbasedata.com",
+                "password": "Test@123"
+            })
+        });
+
+        const data = await resp.json();
+        console.log(data);
+        getCustomerList(data);
+
+        return data;
     } catch (error) {
-     console.error('Error:', error);
-     // Handle errors here
+        console.error('Error:', error);
+        // Handle errors here
     }
- }
- 
- async function getCustomerList(data) {
-     const token = data.access_token;
- 
-     console.log(token);
- 
-     try {
-         const res = await fetch(`https://cors-anywhere.herokuapp.com/https://qa.sunbasedata.com/sunbase/portal/api/assignment.jsp?cmd=get_customer_list`, {
-             method: "GET",
-             headers: {
-                 "Authorization": `Bearer ${token}`,
-                 'Content-Type': 'application/json'
-             },
-         });
- 
-         const resData = await res.json();
- 
-         let arr = Object.keys(resData).map(key => resData[key]);
-         arr.forEach(ele => {
-             addUser(ele);
-         });
- 
-     } catch (error) {
-         console.log(error);
-     }
- }
- 
+}
+
+async function getCustomerList(data) {
+    const token = data.access_token;
+
+    console.log(token);
+
+    try {
+        const res = await fetch(`https://cors-anywhere.herokuapp.com/https://qa.sunbasedata.com/sunbase/portal/api/assignment.jsp?cmd=get_customer_list`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+        });
+
+        const resData = await res.json();
+
+        let arr = Object.keys(resData).map(key => resData[key]);
+        arr.forEach(ele => {
+            addUser(ele);
+        });
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 
 
