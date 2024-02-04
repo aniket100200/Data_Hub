@@ -33,8 +33,7 @@ Make sure you have MySQL installed on your system. Update the `application.prope
 spring.datasource.url=jdbc:mysql://localhost:3306/sunbase?createTableIfNotExists=true
 spring.datasource.username=root
 spring.datasource.password=_Aniket@123
-spring.jpa.hibernate.ddl-auto=update.
-"```"
+spring.jpa.hibernate.ddl-auto=update.```"
 
 ##Usage
 After setting up the database configuration, run the application. You can access the frontend by opening the index.html file in your web browser and logging in with the provided credentials.
