@@ -46,7 +46,7 @@ public class UserController {
     public ResponseEntity deleteUser(@RequestParam("id") int userId) {
         try {
             UserResponceDto userResponceDto = userService.deleteUser(userId);
-            return new ResponseEntity(userResponceDto.getMessage(), HttpStatus.OK);
+            return new ResponseEntity(userResponceDto, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         }

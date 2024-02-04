@@ -89,7 +89,7 @@ public class UserServiceImp implements UserService {
                 break;
             }
             default: {
-                throw new InvalidSearchException("Invalid Search");
+               userList=userRepository.findAll();
             }
         }
 

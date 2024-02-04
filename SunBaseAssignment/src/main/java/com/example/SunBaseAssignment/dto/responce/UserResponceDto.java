@@ -18,4 +18,5 @@ public class UserResponceDto {
     String email;
     String phone;
     String message;
+    String street;
 }

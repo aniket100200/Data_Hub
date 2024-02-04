@@ -30,6 +30,7 @@ public class UserTransformer {
                 .state(user.getState())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
+                .street(user.getStreet())
                 .build();
     }
 
@@ -41,6 +42,7 @@ public class UserTransformer {
         user.setStreet(user.getStreet());
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
+        user.setState(dto.getState());
       return user;
 
     }
