@@ -27,7 +27,6 @@ public class SecurityConfig {
         //YOu have to do configuration..
         http
                 .csrf(csrf->csrf.disable())
-                .cors(cors->cors.disable())
                 .authorizeHttpRequests(auth->auth
                         .requestMatchers("/home/**").authenticated()
                         .requestMatchers("/auth/login").permitAll()
