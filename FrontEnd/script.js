@@ -321,14 +321,14 @@ const syncBtn = document.getElementById("sync");
 syncBtn.addEventListener('click', (e) => {
     //I've to sync the Data... 
     //you have to do some authentications.. here we go..
-    const token = getToken()
+    getToken()
 
 });
 
 
 async function getToken() {
     try {
-        const resp = await fetch(`https://cors-anywhere.herokuapp.com/https://qa.sunbasedata.com/sunbase/portal/api/assignment_auth.jsp`, {
+        const resp = await fetch(`http://localhost:8080/sunbase/token`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -345,8 +345,8 @@ async function getToken() {
 
         const data = await resp.json();
         console.log(data);
-        getCustomerList(data);
-
+        sessionStorage.setItem("data",data.access_token);        
+        // getCustomerList(data);
         return data;
     } catch (error) {
         console.error('Error:', error);
@@ -360,7 +360,7 @@ async function getCustomerList(data) {
     console.log(token);
 
     try {
-        const res = await fetch(`https://cors-anywhere.herokuapp.com/https://qa.sunbasedata.com/sunbase/portal/api/assignment.jsp?cmd=get_customer_list`, {
+        const res = await fetch(`http://localhost:8080/sunbase/customer-list`, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`,
