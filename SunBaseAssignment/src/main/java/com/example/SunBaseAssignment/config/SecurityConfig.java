@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .csrf(csrf->csrf.disable())
                 .authorizeHttpRequests(auth->auth
                         .requestMatchers("/home/**").authenticated()
+                        .requestMatchers(("/sunbase/**")).permitAll()
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers(("/user/**")).authenticated()
                         .anyRequest().authenticated())
