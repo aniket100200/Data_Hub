@@ -17,39 +17,39 @@ loginForm.addEventListener('submit', (e) => {
 
     //you have username and Password
     //I'll Get Token First..
-    loginUser(email,password);
+    loginUser(email, password);
 
 })
 
-    if(sessionStorage.getItem("token"))loginUser();
+if (sessionStorage.getItem("token")) loginUser();
 
 
-async function loginUser(email,password) {
+async function loginUser(email, password) {
     try {
 
-        
-        if(!sessionStorage.getItem("token")){
+
+        if (!sessionStorage.getItem("token")) {
 
             //You have a token in 
             const res = await fetch(`http://localhost:8080/auth/login`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
-                    
+
                 },
                 body: JSON.stringify({
                     email: email,
                     password: password
                 })
             });
-    
+
             const data = await res.json();
             sessionStorage.setItem("token", data.jwtToken);
         }
 
         getData();
-        loginForm.style.display="none";
-        document.querySelector(".customer-list-screen").style.display="block";
+        loginForm.style.display = "none";
+        document.querySelector(".customer-list-screen").style.display = "block";
 
     } catch (error) {
         alert("Something Went Wrong");
@@ -79,12 +79,12 @@ faSearch.addEventListener('click', (e) => {
 async function getData(type, value) {
     try {
 
-         let token=sessionStorage.getItem("token")
-         console.log("Bearer "+token);
-        const res = await fetch(`http://localhost:8080/user/find-by-search/${type}?value=${value}`,{
-            method:"GET",
-            headers:{
-                "Authorization":`Bearer ${token}`,
+        let token = sessionStorage.getItem("token")
+        console.log("Bearer " + token);
+        const res = await fetch(`http://localhost:8080/user/find-by-search/${type}?value=${value}`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
                 'Content-Type': 'application/json',
             }
         });
@@ -127,12 +127,12 @@ function getRow(ele, tbody) {
 async function removeRow(id) {
 
     try {
-        const token=sessionStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         const res = await fetch(`http://localhost:8080/user/delete?id=${id}`, {
             method: 'DELETE',
-            headers:{
-                headers:{
-                    "Authorization":`Bearer ${token}`,
+            headers: {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 }
             }
@@ -188,11 +188,11 @@ submittedForm.addEventListener('submit', (e) => {
 
 async function addUser(user) {
     try {
-        const token=sessionStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         const res = await fetch(`http://localhost:8080/user/add`, {
             method: "POST",
-            headers:{
-                "Authorization":`Bearer ${token}`,
+            headers: {
+                "Authorization": `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(user)
@@ -216,11 +216,11 @@ const updateUserBtn = document.querySelector(".update");
 const addUserBtn = document.querySelector(".add");
 
 async function editUser(userId) {
-    const token=sessionStorage.getItem("token");
-    const res = await fetch(`http://localhost:8080/user/find-by-id?id=${userId}`,{
-        method:"GET",
-        headers:{
-            "Authorization":`Bearer ${token}`,
+    const token = sessionStorage.getItem("token");
+    const res = await fetch(`http://localhost:8080/user/find-by-id?id=${userId}`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
             'Content-Type': 'application/json',
         }
     });
@@ -278,11 +278,11 @@ updateUserBtn.addEventListener('click', (e) => {
 
 async function updateUser(user, id) {
     try {
-        const token =sessionStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         const res = await fetch(`http://localhost:8080/user/update?id=${id}`, {
             method: "PUT",
-            headers:{
-                "Authorization":`Bearer ${token}`,
+            headers: {
+                "Authorization": `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(user)
@@ -328,14 +328,12 @@ syncBtn.addEventListener('click', (e) => {
 
 async function getToken() {
     try {
+        const token = sessionStorage.getItem("token");
         const resp = await fetch(`http://localhost:8080/sunbase/token`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': '*/*',
-                'User-Agent': 'PostmanRuntime/7.36.1',
-                'Accept-Encoding': 'gzip, deflate, br',
-                'Connection': 'keep-alive',
+                'Authorization': `Bearer ${token}` // Include the access token here
             },
             body: JSON.stringify({
                 "login_id": "test@sunbasedata.com",
@@ -343,18 +341,21 @@ async function getToken() {
             })
         });
 
+        console.log(resp);
+
         const data = await resp.json();
-        console.log(data);
-        sessionStorage.setItem("data",data.access_token);        
-        // getCustomerList(data);
+        // console.log(data);
+        sessionStorage.setItem("data", data.access_token);
+        getCustomerList(data);
         return data;
     } catch (error) {
         console.error('Error:', error);
-        // Handle errors here
+        
     }
 }
 
 async function getCustomerList(data) {
+
     const token = data.access_token;
 
     console.log(token);
