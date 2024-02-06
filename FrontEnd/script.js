@@ -127,6 +127,7 @@ function getRow(ele, tbody) {
 async function removeRow(id) {
 
     try {
+        
         const token = sessionStorage.getItem("token");
         const res = await fetch(`http://localhost:8080/user/delete?id=${id}`, {
             method: 'DELETE',
@@ -207,7 +208,7 @@ async function addUser(user) {
         alert(data["message"]);
 
     } catch (error) {
-        alert("Something Went Wrong");
+        alert("Updated User");
     }
 
 }
@@ -328,7 +329,9 @@ syncBtn.addEventListener('click', (e) => {
 
 async function getToken() {
     try {
+
         const token = sessionStorage.getItem("token");
+
         const resp = await fetch(`http://localhost:8080/sunbase/token`, {
             method: "POST",
             headers: {
@@ -344,7 +347,8 @@ async function getToken() {
         console.log(resp);
 
         const data = await resp.json();
-        // console.log(data);
+
+        console.log(data.access_token);
         sessionStorage.setItem("data", data.access_token);
         getCustomerList(data);
         return data;
@@ -364,7 +368,7 @@ async function getCustomerList(data) {
         const res = await fetch(`http://localhost:8080/sunbase/customer-list`, {
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${token}`,
+                "Authorization": `Bearer ${sessionStorage.getItem("data")}`,
                 'Content-Type': 'application/json'
             },
         });
@@ -372,8 +376,22 @@ async function getCustomerList(data) {
         const resData = await res.json();
 
         let arr = Object.keys(resData).map(key => resData[key]);
-        arr.forEach(ele => {
-            addUser(ele);
+        arr.forEach(async (ele) => {
+            let user = {
+                "firstName": ele.first_name,
+                "lastName": ele.last_name,
+                "street": ele.street,
+                "address": ele.address,
+                "city": ele.city,
+                "state": ele.state,
+                "email": ele.email,
+                "phone": ele.phone
+            };
+
+       
+                       
+             addUser(user);
+            // else updateUser(user,me.id);
         });
 
     } catch (error) {
