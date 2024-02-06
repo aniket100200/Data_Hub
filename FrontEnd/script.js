@@ -127,15 +127,15 @@ function getRow(ele, tbody) {
 async function removeRow(id) {
 
     try {
-        
+
         const token = sessionStorage.getItem("token");
         const res = await fetch(`http://localhost:8080/user/delete?id=${id}`, {
             method: 'DELETE',
             headers: {
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                }
+
+                "Authorization": `Bearer ${token}`,
+                'Content-Type': 'application/json',
+
             }
         });
 
@@ -322,7 +322,8 @@ const syncBtn = document.getElementById("sync");
 syncBtn.addEventListener('click', (e) => {
     //I've to sync the Data... 
     //you have to do some authentications.. here we go..
-    getToken()
+    if (!sessionStorage.getItem("data")) getToken();
+    else getCustomerList()
 
 });
 
@@ -354,15 +355,12 @@ async function getToken() {
         return data;
     } catch (error) {
         console.error('Error:', error);
-        
+
     }
 }
 
 async function getCustomerList(data) {
 
-    const token = data.access_token;
-
-    console.log(token);
 
     try {
         const res = await fetch(`http://localhost:8080/sunbase/customer-list`, {
@@ -388,10 +386,22 @@ async function getCustomerList(data) {
                 "phone": ele.phone
             };
 
-       
-                       
-             addUser(user);
-            // else updateUser(user,me.id);
+
+
+            const userCheck = await fetch(`http://localhost:8080/user/find-by-search/phone?value=${user.phone}`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            let searchData = await userCheck.json();
+            searchData = searchData[0];
+            console.log(searchData);
+            if (!searchData)
+                addUser(user);
+            else updateUser(user, searchData.id);
         });
 
     } catch (error) {
