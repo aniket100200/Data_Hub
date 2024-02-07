@@ -1,6 +1,7 @@
 package com.example.SunBaseAssignment.controller;
 
 import com.example.SunBaseAssignment.dto.request.UserRequestDto;
+import com.example.SunBaseAssignment.dto.responce.ExceptionResponseDto;
 import com.example.SunBaseAssignment.dto.responce.UserResponceDto;
 import com.example.SunBaseAssignment.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class UserController {
             UserResponceDto responceDto = userService.addUser(userRequestDto);
             return new ResponseEntity(responceDto, HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(new ExceptionResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -38,7 +39,7 @@ public class UserController {
 
             return new ResponseEntity(userResponce, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(new ExceptionResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -48,7 +49,7 @@ public class UserController {
             UserResponceDto userResponceDto = userService.deleteUser(userId);
             return new ResponseEntity(userResponceDto, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity(new ExceptionResponseDto(e.getMessage()), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -59,7 +60,7 @@ public class UserController {
             return new ResponseEntity<>(responceDto, HttpStatus.OK);
 
         } catch (Exception e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity(new ExceptionResponseDto(e.getMessage()), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -69,7 +70,7 @@ public class UserController {
                 UserResponceDto userResponceDto=userService.getUser(userId);
                 return new ResponseEntity(userResponceDto,HttpStatus.FOUND);
         }catch (Exception e){
-            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+            return new ResponseEntity(new ExceptionResponseDto(e.getMessage()),HttpStatus.NOT_FOUND);
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.example.SunBaseAssignment.controller;
 
 import com.example.SunBaseAssignment.dto.request.SunbaseAuthRequest;
+import com.example.SunBaseAssignment.dto.responce.ExceptionResponseDto;
 import com.example.SunBaseAssignment.dto.responce.TokenRequest;
 import com.example.SunBaseAssignment.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class SunbaseController {
            return new ResponseEntity(new TokenRequest(token),HttpStatus.OK);
        }
        catch (Exception e){
-           return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+           return new ResponseEntity(new ExceptionResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);
        }
     }
 
@@ -74,7 +75,7 @@ public class SunbaseController {
 
         }
         catch (Exception e){
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(new ExceptionResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     };
 }

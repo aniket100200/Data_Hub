@@ -1,5 +1,6 @@
 package com.example.SunBaseAssignment.controller;
 
+import com.example.SunBaseAssignment.dto.responce.ExceptionResponseDto;
 import com.example.SunBaseAssignment.models.JwtRequest;
 import com.example.SunBaseAssignment.models.JwtResponse;
 import com.example.SunBaseAssignment.security.JwtHelper;
@@ -33,18 +34,23 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest request) {
+    public ResponseEntity login(@RequestBody JwtRequest request) {
 
-        this.doAuthenticate(request.getEmail(), request.getPassword()); //this function will do the Authentication..
+        try{
+            this.doAuthenticate(request.getEmail(), request.getPassword()); //this function will do the Authentication..
 
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
-        String token = this.helper.generateToken(userDetails);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
+            String token = this.helper.generateToken(userDetails);
 
-        JwtResponse response = JwtResponse.builder()
-                .jwtToken(token)
-                .username(userDetails.getUsername()).build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+            JwtResponse response = JwtResponse.builder()
+                    .jwtToken(token)
+                    .username(userDetails.getUsername()).build();
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        catch (Exception e){
+            return new ResponseEntity(new ExceptionResponseDto(e.getMessage()),HttpStatus.BAD_REQUEST);
+        }
     }
 
     private void doAuthenticate(String email, String password) {

@@ -2,6 +2,7 @@ package com.example.SunBaseAssignment.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -36,7 +37,15 @@ public class JwtHelper {
 
     //for retrieveing any information from token we will need the secret key
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        try {
+            return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+
+        } catch (Exception e) {
+            // Handle the exception gracefully
+            // For example, you can log the error and return null or an empty Claims object
+            System.out.println("JWT is malformed: " + e.getMessage());
+            return null; // or throw an exception or handle as appropriate for your application
+        }
     }
 
     //check if the token has expired
